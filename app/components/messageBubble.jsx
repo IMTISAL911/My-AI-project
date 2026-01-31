@@ -1,19 +1,15 @@
-export default function MessageBubble({ role, text }) {
+"use client";
+
+export default function MessageBubble({ message }) {
+  const isUser = message.type === "user";
+
   return (
     <div
-      className={`max-w-xl ${
-        role === "user" ? "ml-auto text-right" : "mr-auto"
+      className={`max-w-xs p-2 rounded-lg ${
+        isUser ? "bg-blue-600 text-white self-end" : "bg-gray-700 text-white self-start"
       }`}
     >
-      <div
-        className={`inline-block px-4 py-2 rounded-xl ${
-          role === "user"
-            ? "bg-blue-600 text-white"
-            : "bg-gray-200 text-black"
-        }`}
-      >
-        {text}
-      </div>
+      {message.text}
     </div>
   );
 }
