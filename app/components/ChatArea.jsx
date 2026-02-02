@@ -1,57 +1,30 @@
+
+
 "use client";
-import { useState } from "react";
-// import ChatInput from "@/app/components/ChatInput";
-// import MessageBubble from "@/app/components/MessageBubble";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addUserMessage,
+  addBotMessage,
+  setLoading,
+} from "../redux/chatSlice";
+
 import ChatInput from "./ChatInput";
 import MessageBubble from "./messageBubble";
 
-
-
 export default function ChatArea() {
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Welcome to AI Chat!", type: "bot" },
-  ]);
-
-  // const handleSendMessage = (msg) => {
-  //   const newMessage = { id: Date.now(), text: msg, type: "user" };
-  //   setMessages([...messages, newMessage]);
-
-  //   // Simulate bot response
-  //   setTimeout(() => {
-  //     setMessages((prev) => [
-  //       ...prev,
-  //       { id: Date.now() + 1, text: `Bot reply to: ${msg}`, type: "bot" },
-  //     ]);
-  //   }, 1000);
-  // };
+  const dispatch = useDispatch();
+  const { messages, loading } = useSelector((state) => state.chat);
 
   const handleSendMessage = (msg) => {
-  const userMessage = { id: Date.now(), text: msg, type: "user" };
+    dispatch(addUserMessage(msg));
+    dispatch(setLoading(true));
 
-  // Add user message
-  setMessages((prev) => [...prev, userMessage]);
-
-  // Add thinking loader message
-  const thinkingId = Date.now() + 1;
-  setMessages((prev) => [
-    ...prev,
-    { id: thinkingId, text: "...", type: "thinking" },
-  ]);
-
-  // Simulate bot response
-  setTimeout(() => {
-    setMessages((prev) =>
-      prev
-        .filter((m) => m.id !== thinkingId) // remove thinking
-        .concat({
-          id: Date.now() + 2,
-          text: `Bot reply to: ${msg}`,
-          type: "bot",
-        })
-    );
-  }, 2000);
-};
-
+    setTimeout(() => {
+      dispatch(addBotMessage(`Bot reply to: ${msg}`));
+      dispatch(setLoading(false));
+    }, 2000);
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -59,6 +32,10 @@ export default function ChatArea() {
         {messages.map((m) => (
           <MessageBubble key={m.id} message={m} />
         ))}
+
+        {loading && (
+          <MessageBubble message={{ type: "thinking" }} />
+        )}
       </div>
 
       <ChatInput onSend={handleSendMessage} />
