@@ -1,6 +1,10 @@
 
+
+
 "use client";
 import { useState, useRef, useEffect } from "react";
+import VoiceInput from "./VoiceInput";
+import ImageUpload from "./ImageUpload";
 
 export default function ChatInput({ onSend }) {
   const [text, setText] = useState("");
@@ -36,23 +40,32 @@ export default function ChatInput({ onSend }) {
   };
 
   return (
-    <div className="flex gap-2 items-end p-4 bg-gray-800">
-      <textarea
-        ref={textareaRef}
-        value={text}
-        onChange={handleChange}
-        onKeyDown={handleEnter}
-        placeholder="Type a message..."
-        rows={1}
-        className="flex-1 p-2 rounded-lg resize-none bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto"
-        style={{ maxHeight: `${MAX_HEIGHT}px` }}
-      />
-      <button
-        onClick={handleSend}
-        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition flex-shrink-0"
-      >
-        Send
-      </button>
+    <div className="p-4 bg-gray-800">
+      {/* Input wrapper */}
+      <div className="relative w-full">
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={handleChange}
+          onKeyDown={handleEnter}
+          placeholder="Type a message..."
+          rows={1}
+          className="w-full pr-32 p-2 rounded-lg resize-none bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto"
+          style={{ maxHeight: `${MAX_HEIGHT}px` }}
+        />
+
+        {/* Icons inside input field */}
+        <div className="absolute right-2 bottom-2 flex gap-1 items-center">
+          <VoiceInput  className="" onSend={onSend} />
+          <ImageUpload onSend={onSend} />
+          <button
+            onClick={handleSend}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-lg transition"
+          >
+            Send
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
