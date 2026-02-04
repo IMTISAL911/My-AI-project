@@ -1,12 +1,22 @@
+
+
 "use client";
 
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { sendToAI } from "../services/aiApi";
+
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async (userText) => {
+    const reply = await sendToAI(userText);
+    return reply;
+  }
+);
 
 const initialState = {
-  messages: [
-    { id: 1, text: "Welcome to AI Chat!", type: "bot" }
-  ],
+  messages: [{ id: 1, text: "Welcome to AI Chat!", type: "bot" }],
   loading: false,
+  error: null,
 };
 
 const chatSlice = createSlice({
@@ -20,30 +30,30 @@ const chatSlice = createSlice({
         type: "user",
       });
     },
-
-    addBotMessage: (state, action) => {
-      state.messages.push({
-        id: Date.now(),
-        text: action.payload,
-        type: "bot",
-      });
-    },
-
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-
     clearChat: (state) => {
       state.messages = [];
     },
   },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(sendMessage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.messages.push({
+          id: Date.now(),
+          text: action.payload,
+          type: "bot",
+        });
+      })
+      .addCase(sendMessage.rejected, (state) => {
+        state.loading = false;
+        state.error = "Failed to get AI response";
+      });
+  },
 });
 
-export const {
-  addUserMessage,
-  addBotMessage,
-  setLoading,
-  clearChat,
-} = chatSlice.actions;
-
+export const { addUserMessage, clearChat } = chatSlice.actions;
 export default chatSlice.reducer;

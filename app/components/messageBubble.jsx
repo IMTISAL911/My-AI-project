@@ -1,22 +1,3 @@
-// export default function MessageBubble({ message }) {
-//   const isUser = message.type === "user";
-//   const isThinking = message.type === "thinking";
-
-//   return (
-//     <div
-//       className={`flex ${isUser ? "justify-end" : "justify-start"}`}
-//     >
-//       <div
-//         className={`px-4 py-2 rounded-xl max-w-xs relative
-//         ${isUser ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
-//       >
-//         {isThinking ? <TypingDots /> : message.text}
-
-//         {!isThinking && <ActionButtons text={message.text} />}
-//       </div>
-//     </div>
-//   );
-// }
 
 
 export default function MessageBubble({ message }) {
