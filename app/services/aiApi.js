@@ -1,7 +1,7 @@
 export async function sendToAI(message) {
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBOt-x_ve8JMWeAwvqkJG6ggCQTb09gufg`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
