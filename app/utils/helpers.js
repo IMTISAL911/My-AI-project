@@ -1,28 +1,4 @@
-// // Save sessions/messages to localStorage
-// export const saveToLocal = (messages) => {
-//   try {
-//     localStorage.setItem("chat_history", JSON.stringify(messages));
-//   } catch (err) {
-//     console.error("Failed to save chat to localStorage", err);
-//   }
-// };
 
-// // Load sessions/messages from localStorage
-// export const loadFromLocal = () => {
-//   try {
-//     const data = localStorage.getItem("chat_history");
-//     return data ? JSON.parse(data) : [];
-//   } catch (err) {
-//     console.error("Failed to load chat from localStorage", err);
-//     return [];
-//   }
-// };
-
-
-
-// utils/helpers.js
-
-// Load all chats from localStorage
 export const saveChatMessages = (chatId, messages) => {
   try {
     const allChats = JSON.parse(localStorage.getItem("chat_history") || "[]");
