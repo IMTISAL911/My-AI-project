@@ -22,15 +22,19 @@ export default function ChatArea() {
   }, [messages, loading]);
 
   const handleSendMessage = (msg) => {
-    let chatId = currentChatId;
+    // let chatId = currentChatId;
 
-    // If no current chat, create a new one
-    if (!chatId) {
-      chatId = Date.now();
-    }
+    // // If no current chat, create a new one
+    // if (!chatId) {
+    //   chatId = Date.now();
+    // }
 
-    dispatch(addUserMessage({ chatId, text: msg }));
-    dispatch(sendMessage({ chatId, text: msg }));
+    // dispatch(addUserMessage({ chatId, text: msg }));
+    // dispatch(sendMessage({ chatId, text: msg }));
+
+    if (!currentChatId || !user?.uid) return;
+
+  dispatch(sendMessage({ chatId: currentChatId, text: msg, userId: user.uid }));
   };
 
   const isEmpty = messages.length === 0;
