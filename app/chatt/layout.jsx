@@ -1,23 +1,72 @@
+// "use client";
+// import { useRouter } from "next/navigation";
+// import { useEffect } from "react";
+// // import Sidebar from "@/components/Sidebar"; // correct import
+// import Sidebar from "../components/Sidebar";
+
+// export default function ChatLayout({ children }) {
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     const user = localStorage.getItem("user");
+//     if (!user) {
+//       router.push("/auth/login"); // redirect if not logged in
+//     }
+//   }, [router]);
+
+//   return (
+//     <div className="flex h-screen bg-gray-900 text-white">
+//       <Sidebar />
+//       <main className="flex-1 overflow-hidden">{children}</main>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
+
+import React from "react"; // ✅ ADD THIS
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-// import Sidebar from "@/components/Sidebar"; // correct import
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
+import { loadFromLocal } from "../utils/helpers";
 
 export default function ChatLayout({ children }) {
   const router = useRouter();
+  const [chats, setChats] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
-    if (!user) {
-      router.push("/auth/login"); // redirect if not logged in
-    }
+    if (!user) router.push("/auth/login");
+
+    const savedChats = loadFromLocal();
+    setChats(savedChats);
+    if (savedChats.length > 0) setCurrentChatId(savedChats[0].id);
   }, [router]);
+
+  const handleSelectChat = (id) => {
+    setCurrentChatId(id);
+  };
+
+  const currentChatMessages =
+    chats.find((c) => c.id === currentChatId)?.messages || [];
+
+  // clone children and pass props
+  const childrenWithProps =
+    children && typeof children === "object"
+      ? React.cloneElement(children, {
+          messages: currentChatMessages,
+          currentChatId: currentChatId,
+          setChats: setChats,
+        })
+      : children;
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      <Sidebar />
-      <main className="flex-1 overflow-hidden">{children}</main>
+      <Sidebar onSelectChat={handleSelectChat} />
+      <main className="flex-1 overflow-hidden">{childrenWithProps}</main>
     </div>
   );
 }
