@@ -82,36 +82,49 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { sendToAI } from "../services/aiApi";
 import { db } from "../services/firebase";
-import { ref, set, get, child, push } from "firebase/database";
+import { ref, set, get } from "firebase/database";
 
-// Send AI message thunk
+// SEND MESSAGE
 export const sendMessage = createAsyncThunk(
   "chat/sendMessage",
   async ({ chatId, text, userId }) => {
-    const reply = await sendToAI(text);
+    let reply = "AI is not responding...";
+
+    try {
+      reply = await sendToAI(text);
+    } catch (e) {
+      console.error("AI error:", e);
+    }
 
     const chatRef = ref(db, `chats/${userId}/${chatId}/messages`);
     const snapshot = await get(chatRef);
-    const messages = snapshot.exists() ? snapshot.val() : [];
-    const updatedMessages = [
-      ...messages,
+    const old = snapshot.exists() ? snapshot.val() : [];
+
+    const updated = [
+      ...old,
       { id: Date.now(), text, type: "user" },
       { id: Date.now() + 1, text: reply, type: "bot" },
     ];
 
-    await set(chatRef, updatedMessages);
+    await set(chatRef, updated);
 
-    return { chatId, messages: updatedMessages };
+    return { chatId, messages: updated };
   }
 );
 
-// Load chats for user
+// LOAD CHATS
 export const loadChats = createAsyncThunk(
   "chat/loadChats",
   async (userId) => {
-    const snapshot = await get(ref(db, `chats/${userId}`));
-    if (snapshot.exists()) return snapshot.val();
-    return [];
+    const snap = await get(ref(db, `chats/${userId}`));
+    if (!snap.exists()) return [];
+
+    const data = snap.val();
+
+    return Object.keys(data).map((id) => ({
+      id,
+      messages: data[id].messages || [],
+    }));
   }
 );
 
@@ -126,23 +139,31 @@ const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
-    selectChat: (state, action) => {
-      state.currentChatId = action.payload;
+    selectChat: (s, a) => {
+      s.currentChatId = a.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(sendMessage.pending, (state) => { state.loading = true; })
-      .addCase(sendMessage.fulfilled, (state, action) => {
-        state.loading = false;
-        const { chatId, messages } = action.payload;
-        const existing = state.chats.find((c) => c.id === chatId);
-        if (existing) existing.messages = messages;
-        else state.chats.push({ id: chatId, messages });
+  extraReducers: (b) => {
+    b
+      .addCase(sendMessage.pending, (s) => { s.loading = true; })
+      .addCase(sendMessage.fulfilled, (s, a) => {
+        s.loading = false;
+
+        const { chatId, messages } = a.payload;
+        const exist = s.chats.find((c) => c.id === chatId);
+
+        if (exist) exist.messages = messages;
+        else s.chats.push({ id: chatId, messages });
+
+        s.currentChatId = chatId;
       })
-      .addCase(sendMessage.rejected, (state) => { state.loading = false; state.error = "Failed to get AI response"; })
-      .addCase(loadChats.fulfilled, (state, action) => {
-        state.chats = action.payload ? Object.values(action.payload) : [];
+      .addCase(sendMessage.rejected, (s) => {
+        s.loading = false;
+        s.error = "AI failed";
+      })
+
+      .addCase(loadChats.fulfilled, (s, a) => {
+        s.chats = a.payload || [];
       });
   },
 });
