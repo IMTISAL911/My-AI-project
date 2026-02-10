@@ -1,10 +1,17 @@
 "use client";
 import { useRouter } from "next/navigation";
+// import StarsBackground from "@/app/components/StarsBackground"
+import NasaBackground from "@/app/components/StarsBackground"
 
 export default function SplashPage() {
   const router = useRouter();
 
   return (
+    <>
+        
+        {/* <StarsBackground /> */}
+        <NasaBackground />
+
     <div className="flex flex-col items-center justify-center h-screen gap-6">
       <h1 className="text-5xl font-bold">My AI</h1>
 
@@ -28,5 +35,6 @@ export default function SplashPage() {
         </button>
       </div>
     </div>
+    </>
   );
 }
