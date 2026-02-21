@@ -58,9 +58,16 @@ export default function SignupPage() {
           className="w-full mb-6 p-3 border rounded-lg"
         />
 
-        <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
-          {loading ? "Creating..." : "Sign Up"}
-        </button>
+         <button
+  disabled={loading}
+  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg flex items-center justify-center transition"
+>
+  {loading ? (
+    <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  ) : (
+    "Signup"
+  )}
+</button>
 
         <p className="text-center mt-4 text-sm">
           Already have an account?{" "}
