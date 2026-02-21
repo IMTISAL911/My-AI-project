@@ -33,7 +33,7 @@ export default function LoginPage() {
       <form
         onSubmit={handleLogin}
         autoComplete="off"
-        className="bg-white/10 backdrop-blur-xl text-white p-8 rounded-xl w-96 bg-white text-black p-8 rounded-xl w-96 shadow-lg"
+        className="bg-white/10 backdrop-blur-xl text-white p-8 rounded-xl w-96 bg-white text-black p-8 rounded-xl w-96 shadow-lg border border-white/20"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
