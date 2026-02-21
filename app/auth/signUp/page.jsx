@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../../redux/authSlice";
+import StarsBackground from "../../components/StarsBackground";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -25,11 +26,13 @@ export default function SignupPage() {
   }, [user]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <>
+    <StarsBackground />
+    <div className="flex items-center justify-center h-screen ">
       <form
         onSubmit={handleSignup}
         autoComplete="off"
-        className="bg-white text-black p-8 rounded-xl w-96 shadow-lg"
+        className="bg-white/10 backdrop-blur-xl text-white p-8 rounded-xl w-96 shadow-2xl border border-white/20"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
@@ -67,5 +70,6 @@ export default function SignupPage() {
         </p>
       </form>
     </div>
+    </>
   );
 }
