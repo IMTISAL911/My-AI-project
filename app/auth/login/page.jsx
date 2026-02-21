@@ -15,6 +15,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -58,10 +59,17 @@ export default function LoginPage() {
           className="w-full mb-6 p-3 border rounded-lg focus:outline-none"
         />
 
-        <button className="w-full bg-blue-600 text-white py-3 rounded-lg">
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
+      
+      <button
+  disabled={loading}
+  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg flex items-center justify-center transition"
+>
+  {loading ? (
+    <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  ) : (
+    "Login"
+  )}
+</button>
         <p className="text-center mt-4 text-sm">
           Don’t have an account?{" "}
           <Link href="/auth/signUp" className="text-blue-600">
