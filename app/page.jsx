@@ -22,14 +22,14 @@ export default function SplashPage() {
       <div className="flex gap-4">
         <button
           onClick={() => router.push("/auth/login")}
-          className="bg-blue-600 px-6 py-3 rounded-lg"
+          className="bg-blue-600 px-6 py-3 rounded-lg cursor-pointer"
         >
           Login
         </button>
 
         <button
           onClick={() => router.push("/auth/signUp")}
-          className="bg-purple-600 px-6 py-3 rounded-lg"
+          className="bg-purple-600 px-6 py-3 rounded-lg cursor-pointer"
         >
           Sign Up
         </button>
