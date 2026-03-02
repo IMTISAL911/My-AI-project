@@ -1,15 +1,31 @@
+
+
+
+
 export async function POST(req) {
   try {
-    const { message } = await req.json();
+    const body = await req.json();
+    const message = body?.message;
 
-    if (!process.env.GEMINI_API_KEY) {
+    // ✅ validate message
+    if (!message || message.trim() === "") {
       return Response.json(
-        { error: "Missing GEMINI_API_KEY" },
+        { error: "Message is required" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ validate API key
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("❌ GEMINI_API_KEY missing in env");
+      return Response.json(
+        { error: "Server misconfiguration" },
         { status: 500 }
       );
     }
 
-    const res = await fetch(
+    // ✅ call Gemini
+    const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
@@ -26,15 +42,37 @@ export async function POST(req) {
       }
     );
 
-    const data = await res.json();
+    // ✅ check HTTP error
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text();
+      console.error("❌ Gemini HTTP error:", errText);
 
-    return Response.json({
-      text:
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "No AI response",
-    });
-  } catch (e) {
-    console.error("Gemini API error:", e);
+      return Response.json(
+        { error: "Gemini request failed" },
+        { status: 500 }
+      );
+    }
+
+    const data = await geminiRes.json();
+
+    // 🔍 debug log
+    console.log("✅ Gemini raw:", JSON.stringify(data, null, 2));
+
+    // ✅ safe extraction
+    const aiText =
+      data?.candidates?.[0]?.content?.parts?.find(
+        (p) => typeof p.text === "string"
+      )?.text;
+
+    if (!aiText) {
+      console.error("❌ No AI text found:", data);
+      return Response.json({ text: "AI response empty" });
+    }
+
+    return Response.json({ text: aiText });
+
+  } catch (error) {
+    console.error("🔥 Gemini route error:", error);
     return Response.json({ error: "AI failed" }, { status: 500 });
   }
 }

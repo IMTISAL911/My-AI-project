@@ -1,9 +1,12 @@
 
 
 
+// "use client";
+
 // export default function MessageBubble({ message }) {
 //   const isUser = message.type === "user";
 //   const isThinking = message.type === "thinking";
+//   const isBot = message.type === "bot";
 
 //   return (
 //     <div className={`flex mb-3 ${isUser ? "justify-end" : "justify-start"}`}>
@@ -13,9 +16,7 @@
 //       >
 //         {isThinking ? <TypingWave /> : message.text}
 
-//         {!isThinking && (
-//           <ActionButtons text={message.text} isUser={isUser} />
-//         )}
+//         {isBot && <ActionButtons text={message.text} />}
 //       </div>
 //     </div>
 //   );
@@ -36,27 +37,19 @@
 
 //   return (
 //     <div className="absolute -bottom-5 right-1 flex gap-2 text-[10px] opacity-70">
-//       <button
-//         onClick={copy}
-//         className="hover:opacity-100 transition"
-//       >
+//       <button onClick={copy} className="hover:opacity-100 transition">
 //         Copy
 //       </button>
-//       <button className="hover:opacity-100 transition">
-//         Edit
-//       </button>
+//       <button className="hover:opacity-100 transition">Edit</button>
 //     </div>
 //   );
 // }
 
 
 
-"use client";
-
 export default function MessageBubble({ message }) {
   const isUser = message.type === "user";
   const isThinking = message.type === "thinking";
-  const isBot = message.type === "bot";
 
   return (
     <div className={`flex mb-3 ${isUser ? "justify-end" : "justify-start"}`}>
@@ -66,7 +59,9 @@ export default function MessageBubble({ message }) {
       >
         {isThinking ? <TypingWave /> : message.text}
 
-        {isBot && <ActionButtons text={message.text} />}
+        {!isThinking && message.text && (
+          <ActionButtons text={message.text} />
+        )}
       </div>
     </div>
   );
